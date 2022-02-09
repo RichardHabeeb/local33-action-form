@@ -1,0 +1,134 @@
+
+h1
+{
+	font-family: motiva-sans, sans-serif;
+	font-weight: 800;
+	font-style: normal;
+	font-size: 6rem;
+}
+
+h2, h3
+{
+	font-family: motiva-sans, sans-serif;
+	font-weight: 700;
+	font-style: normal;
+	margin-top:0.5em;
+}
+
+h5
+{
+	#font-family: motiva-sans, sans-serif;
+	font-weight: 300;
+	font-style: italic;
+	color: #AAA;
+}
+
+.pitch_text
+{
+	font-family: motiva-sans, sans-serif;
+	font-weight: 700;
+	font-style: normal;
+}
+
+.white-font
+{
+	color:#fff;
+}
+
+.off-white-bg
+{
+	background-color: #F0F0F0;
+}
+
+.light-border
+{
+	border: 1px dotted #AAA;
+}
+
+.zvm
+{
+	margin-top:0;
+	margin-bottom:0;
+}
+
+.padded
+{
+	padding: 1em;
+}
+
+.margined
+{
+	margin: 0.25em;
+}
+
+.dark-magenta-bg
+{
+	background-color: #BF00BF;
+}
+
+.dark-magenta-bg:hover
+{
+	background-color: #FD60FD;
+}
+
+input[type="checkbox"]:checked + span:not(.lever)::before
+{
+	border-right-color: #BF00BF;
+	border-bottom-color: #BF00BF;
+}
+
+/* label focus color */
+.input-field input[type=text]:focus + label {
+  color: #BF00BF !important;
+}
+/* label underline focus color */
+.input-field input[type=text]:focus {
+  border-bottom: 1px solid #BF00BF !important;
+  box-shadow: 0 1px 0 0 #BF00BF !important;
+}
+/* icon prefix focus color */
+.input-field .prefix.active {
+  color: #BF00BF;
+}
+
+.banner
+{
+	width:100%;
+	-webkit-filter: invert(100%);
+}
+
+#cover_parent
+{
+	background-repeat: no-repeat;
+	background-image: url(https://local33.org/wp-content/uploads/2021/10/SSS-Building-Background.png);
+	background-position: 50% 50%;
+	background-attachment: scroll;
+	background-color: #ff00ff;
+	padding: 2rem;
+	margin-bottom: 2rem;
+}
+
+
+#form_parent
+{
+	padding: 0rem 2rem 2rem 2rem;
+}
+
+.small-only {
+	display: none;
+}
+.small-only ~ input, .small-only ~ label {
+	margin: 0 !important;
+	width: 100% !important;
+}
+
+@media only screen and (max-width: 601px) {
+	.small-only {
+		display: block;
+	}
+	.small-only ~ input, .small-only ~ label {
+		margin-left:3rem !important;
+		width: calc(100% - 3rem) !important;
+	}
+}
+
