@@ -173,7 +173,7 @@
                   Download My Action
                 </a>
                 <a class="margined grey-text" href="union_yes_blank.pdf">
-                  Download blank action
+                  I want to write my own (Download blank action).
                 </a>
               </div>
             </div>
@@ -259,7 +259,7 @@
         });
 
         if(window.innerWidth > 600) {
-          $("#cover_parent").css({"height": $("#form_parent").css("height")});
+          $("#cover_parent").css({"height": "calc(" + $("#form_parent").css("height") + " - 2rem)"});
         }
 	    });
 
