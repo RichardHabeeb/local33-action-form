@@ -132,3 +132,18 @@ input[type="checkbox"]:checked + span:not(.lever)::before
 	}
 }
 
+
+.example-img {
+	width: 100%;
+	margin: 1rem 0 3rem 0;
+}
+
+
+#signature_parent {
+	display:none;
+}
+
+#signature {
+	height: 10rem;
+	overflow: hidden;
+}

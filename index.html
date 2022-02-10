@@ -34,27 +34,9 @@
               <h1 class="white-font">What do you want to win?</h1>
             </div>
 
-            <div class="row">
-              <div class="col s12">
-                <div class="card-panel grey lighten-5 z-depth-1">
-                  <div class="row valign-wrapper">
-                    <div class="col s12">
-                      <img src="img/example1.jpeg" alt="" class="circle responsive-img">
-                    </div>
-                    <div class="col s12">
-                      <span class="black-text">
-                        This is a square image. Add the "circle" class to it to make it appear circular.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
 
-              <div class="col s12 off-white-bg">
-                <img class="responsive-img circle" src="img/example6.jpeg">
-              </div>
-            </div>
+
           </div>
           <div id="form_parent" class="col l6 s12">
             <div class="row off-white-bg">
@@ -62,6 +44,8 @@
                 <h3>Join the campaign.</h3>
               </div>
             </div>
+
+
 
             <div class="row light-border zvm padded">
               <div class="col s12">
@@ -158,6 +142,23 @@
         </div> <!-- parent row -->
 
 
+        <div class="row">
+          <div class="col s12">
+            <div class="row">
+              <div class="col m4 s12 grey lighten-5 z-depth-1">
+                <img src="img/example1.jpeg" alt="" class="example-img">
+              </div>
+              <div class="col m4 s12 gray lighten-5 z-depth-2">
+                <img src="img/example6.jpeg" alt="" class="example-img">
+              </div>
+              <div class="col m4 s12 grey lighten-5 z-depth-1">
+                <img src="img/example2.jpeg" alt="" class="example-img">
+              </div>
+            </div>
+          </div>
+        </div>
+
+
         <div class="row light-border padded">
           <div class="col s12">
             <h3>Show your support by sending a photo!</h3>
@@ -186,10 +187,19 @@
                     <span>Upload Picture</span>
                     <input type="file" id="input_11" name="q11_shareA[]" multiple  accept="image/*" capture="camera" />
                   </div>
-                  <div class = "file-path-wrapper">
+                  <div class="file-path-wrapper">
                     <input class="file-path validate" type="text" placeholder="Upload multiple files" />
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="row" id="signature_parent">
+              <div class="col m8 offset-m2 s12">
+                <p>I, <span id="my_name"></span>, authorize Local 33–UNITE HERE to use my photo for campaigns in print and online, including on local33.org and on social media such as Twitter, Facebook, Instagram.</p>
+                <br>
+                <label for="signature">Signature</label>
+	              <div id="signature" class="z-depth-1 card-panel"></div>
+                <input id="input_9" name="q9_signature" type="hidden" />
               </div>
             </div>
           </div>
@@ -220,7 +230,35 @@
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit/dist/fontkit.umd.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <!--[if lt IE 9]>
+	  <script type="text/javascript" src="js/jSignature/flashcanvas.js"></script>
+	  <![endif]-->
+    <script src="js/jSignature/jSignature.min.js"></script>
     <script >
+	    $(document).ready(function() {
+
+
+        function refresh_sig_name(e) {
+          $("#my_name").html($("#first_4").val() + " " + $("#last_4").val());
+        }
+        $("#first_4,#last_4").bind("input", refresh_sig_name);
+        $("#first_4,#last_4").bind("click", refresh_sig_name);
+        refresh_sig_name();
+
+        $("#input_11").bind("input", function(e) {
+          $("#signature_parent").slideDown();
+          $("#signature").jSignature({
+              'background-color': 'transparent',
+              'decor-color': 'transparent',
+          });
+
+          $("#signature").bind("change", function() {
+            $("#input_9").val($("#signature").jSignature("getData"));
+          });
+        });
+
+	    });
+
       async function createPdf(auto_print) {
         const existingPdfBytes = await fetch("./union_yes_blank.pdf").then(res => res.arrayBuffer())
         var bytes = new Uint8Array(existingPdfBytes);
