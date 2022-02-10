@@ -11,7 +11,7 @@
 
   <body>
     <div class="container">
-      <form action="https://unitehere.jotform.com/submit/220236884372862/" method="post" enctype="multipart/form-data" name="form_220236884372862" id="220236884372862" accept-charset="utf-8" autocomplete="on">
+      <form action="https://unitehere.jotform.com/submit/220236884372862/" method="post" enctype="multipart/form-data" name="form_220236884372862" id="220236884372862" accept-charset="utf-8" autocomplete="on" onSubmit="return validateForm()">
         <input type="hidden" name="formID" value="220236884372862" />
         <input type="hidden" id="JWTContainer" value="" />
         <input type="hidden" id="cardinalOrderNumber" value="" />
@@ -67,17 +67,16 @@
                   </div>
                 </div>
 
-
                 <div class="row">
                   <div class="input-field col m6 s12">
                     <i class="material-icons prefix">account_circle</i>
                     <input type="text" id="first_4" name="q4_name[first]" required>
-                    <label for="first_4">First Name</label>
+                    <label for="first_4">First Name*</label>
                   </div>
                   <div class="input-field col m6 s12">
                     <i class="material-icons prefix small-only"></i>
                     <input type="text" id="last_4" name="q4_name[last]" required>
-                    <label for="last_4">Last Name</label>
+                    <label for="last_4">Last Name*</label>
                   </div>
                 </div>
 
@@ -85,7 +84,7 @@
                   <div class="input-field col s12">
                     <i class="material-icons prefix">apartment</i>
                     <input type="text" id="input_6" name="q6_department" required>
-                    <label for="input_6">Department</label>
+                    <label for="input_6">Department*</label>
                   </div>
                 </div>
 
@@ -93,7 +92,7 @@
                   <div class="input-field col s12">
                     <i class="material-icons prefix">email</i>
                     <input type="text" id="input_8" name="q8_nonyaleEmail" required>
-                    <label for="input_8">Non-Yale Email</label>
+                    <label for="input_8">Non-Yale Email*</label>
                   </div>
                 </div>
 
@@ -133,6 +132,12 @@
                     <i class="material-icons prefix small-only"></i>
                     <input type="text" id="input_20_postal" name="q20_address[postal]">
                     <label for="input_20_postal">Zip Code</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col s12">
+                    <label>(* = required)</label>
                   </div>
                 </div>
 
@@ -197,9 +202,9 @@
               <div class="col m8 offset-m2 s12">
                 <p>I, <span id="my_name"></span>, authorize Local 33–UNITE HERE to use my photo for campaigns in print and online, including on local33.org and on social media such as Twitter, Facebook, Instagram.</p>
                 <br>
-                <label for="signature">Signature</label>
+                <label for="signature">Signature (required)</label>
 	              <div id="signature" class="z-depth-1 card-panel"></div>
-                <input id="input_9" name="q9_signature" type="hidden" />
+                <input id="input_9" name="q9_signature" type="hidden" required/>
               </div>
             </div>
           </div>
@@ -256,12 +261,25 @@
             $("#input_9").val($("#signature").jSignature("getData"));
           });
 
+
         });
+        if($("#input_11").val().length > 0) {
+          $("#input_11").trigger("input");
+        }
 
         if(window.innerWidth > 600) {
           $("#cover_parent").css({"height": "calc(" + $("#form_parent").css("height") + " - 2rem)"});
         }
 	    });
+
+      function validateForm() {
+
+        var signature = $("#input_11").val().length == 0 ||
+          $("#signature").jSignature('getData', 'native').length > 0;
+
+        if(signature == false) alert("Your signature is required.");
+        return signature;
+      }
 
       async function createPdf(auto_print) {
         const existingPdfBytes = await fetch("./union_yes_blank.pdf").then(res => res.arrayBuffer())
