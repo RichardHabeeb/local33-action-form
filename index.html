@@ -185,7 +185,7 @@
                 <div class="file-field input-field">
                   <div class="btn dark-magenta-bg">
                     <span>Upload Picture</span>
-                    <input type="file" id="input_11" name="q11_shareA[]" multiple  accept="image/*" capture="camera" />
+                    <input type="file" id="input_11" name="q11_shareA[]" multiple  accept="image/*" />
                   </div>
                   <div class="file-path-wrapper">
                     <input class="file-path validate" type="text" placeholder="Upload multiple files" />
@@ -255,8 +255,12 @@
           $("#signature").bind("change", function() {
             $("#input_9").val($("#signature").jSignature("getData"));
           });
+
         });
 
+        if(window.innerWidth > 600) {
+          $("#cover_parent").css({"height": $("#form_parent").css("height")});
+        }
 	    });
 
       async function createPdf(auto_print) {
