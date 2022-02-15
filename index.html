@@ -11,7 +11,7 @@
 
   <body>
     <div class="container">
-      <form action="https://unitehere.jotform.com/submit/212716536619864/" method="post" enctype="multipart/form-data" name="form_212716536619864" id="212716536619864" accept-charset="utf-8" autocomplete="on" onSubmit="return validateForm()">
+      <form action="https://unitehere.jotform.com/submit/212716536619864/" method="post" enctype="multipart/form-data" name="form_212716536619864" id="212716536619864" accept-charset="utf-8" autocomplete="on">
         <input type="hidden" name="formID" value="212716536619864" />
         <input type="hidden" id="JWTContainer" value="" />
         <input type="hidden" id="cardinalOrderNumber" value="" />
@@ -222,7 +222,7 @@
 
         <div class="row">
           <div class="col s12 center-align">
-            <button class="btn waves-effect waves-light btn-large dark-magenta-bg" type="submit" name="action">
+            <button class="btn waves-effect waves-light btn-large dark-magenta-bg" type="submit" name="action" id="submit_btn">
               Submit
               <i class="material-icons right">send</i>
             </button>
@@ -240,37 +240,6 @@
 	  <![endif]-->
     <script src="js/jSignature/jSignature.min.js"></script>
     <script >
-	    $(document).ready(function() {
-
-
-        function refresh_sig_name(e) {
-          $("#my_name").html($("#first_4").val() + " " + $("#last_4").val());
-        }
-        $("#first_4,#last_4").bind("input", refresh_sig_name);
-        $("#first_4,#last_4").bind("click", refresh_sig_name);
-        refresh_sig_name();
-
-        $("#input_11").bind("input", function(e) {
-          $("#signature_parent").slideDown();
-          $("#signature").jSignature({
-              'background-color': 'transparent',
-              'decor-color': 'transparent',
-          });
-
-          $("#signature").bind("change", function() {
-            $("#input_9").val($("#signature").jSignature("getData"));
-          });
-
-
-        });
-        if($("#input_11").val().length > 0) {
-          $("#input_11").trigger("input");
-        }
-
-        if(window.innerWidth > 600) {
-          $("#cover_parent").css({"height": "calc(" + $("#form_parent").css("height") + " - 2rem)"});
-        }
-	    });
 
 
       async function generatePdf(auto_print, uri=true) {
@@ -317,103 +286,96 @@
 
 
       function createPdf(auto_print) {
-        const pdfDataUri = generatePdf(auto_print);
+        generatePdf(auto_print).then(function (pdfDataUri) {
+          if(auto_print) {
+            w = window.open(pdfDataUri);
+          } else {
+            var element = document.createElement('a');
+            element.setAttribute('href', pdfDataUri);
+            element.setAttribute('download', "my_action.pdf");
+            document.body.appendChild(element);
+            element.click();
+          }
+        });
+      }
 
-        if(auto_print) {
-          w = window.open(pdfDataUri);
-        } else {
-          var element = document.createElement('a');
-          element.setAttribute('href', pdfDataUri);
-          element.setAttribute('download', "my_action.pdf");
-          document.body.appendChild(element);
-          element.click();
+      $(document).ready(function() {
+
+
+        function refresh_sig_name(e) {
+          $("#my_name").html($("#first_4").val() + " " + $("#last_4").val());
+        }
+        $("#first_4,#last_4").bind("input", refresh_sig_name);
+        $("#first_4,#last_4").bind("click", refresh_sig_name);
+        refresh_sig_name();
+
+        $("#input_11").bind("input", function(e) {
+          $("#signature_parent").slideDown();
+          $("#signature").jSignature({
+              'background-color': 'transparent',
+              'decor-color': 'transparent',
+          });
+
+          $("#signature").bind("change", function() {
+            $("#input_9").val($("#signature").jSignature("getData"));
+          });
+
+
+        });
+        if($("#input_11").val().length > 0) {
+          $("#input_11").trigger("input");
         }
 
-      }
+        if(window.innerWidth > 600) {
+          $("#cover_parent").css({"height": "calc(" + $("#form_parent").css("height") + " - 2rem)"});
+        }
 
-      function validateForm() {
+        function validateForm() {
 
-        var signature = $("#input_11").val().length == 0 ||
-          $("#signature").jSignature('getData', 'native').length > 0;
+          var signature = $("#input_11").val().length == 0 ||
+            $("#signature").jSignature('getData', 'native').length > 0;
 
-        if(signature == false) alert("Your signature is required.");
-        return signature;
-      }
+          if(signature == false) alert("Your signature is required.");
+          return signature;
+        }
 
-      function submitForm() {
-        generatePdf(false, false).then(function(pdf_file_bytes) {
-          var form_data = new FormData(document.getElementById("212716536619864"));
-          const bytes  = new Uint8Array( pdf_file_bytes );
-          const blob   = new Blob( [ bytes ], { type: "application/pdf" } );
-          var pdf_file = new File(
-            [blob],
-            $("#first_4").val() + "_" + $("#last_4").val() + "_action.pdf",
-            { type: "application/pdf" });
+        $("#212716536619864").submit(function(e) {
+          if(!validateForm()) return false;
 
-          form_data.append("q11_shareA[]", pdf_file);
+          generatePdf(false, false).then(function(pdf_file_bytes) {
+            var form_data = new FormData(document.getElementById("212716536619864"));
+            const bytes  = new Uint8Array( pdf_file_bytes );
+            const blob   = new Blob( [ bytes ], { type: "application/pdf" } );
+            var pdf_file = new File(
+              [blob],
+              $("#first_4").val() + "_" + $("#last_4").val() + "_action.pdf",
+              { type: "application/pdf" });
 
-          $.ajax({
-            url: 'https://unitehere.jotform.com/submit/212716536619864/',
-            type: 'POST',
-            data: form_data,
-            processData: false,
-            contentType: false,
-            //contentType: "multipart/form-data",
+            form_data.append("q11_shareA[]", pdf_file);
 
+            $.ajax({
+              url: 'https://unitehere.jotform.com/submit/212716536619864/',
+              type: 'POST',
+              data: form_data,
+              processData: false,
+              contentType: false,
+              success: function() {
+
+              },
+              error: function() {
+                $("#submit_btn").attr({"disabled": false}).html(
+                  "Submit <i class='material-icons right'>send</i>");
+              },
+            });
           });
+
+          $("#submit_btn").attr({"disabled": true}).html(
+            "Submitting...<i class='material-icons right'>pending</i>");
+
+          e.preventDefault();
         });
 
-        //formData.append("formID", "212716536619864");
-        //formData.append("q22_iWant", $("#want_field").val());
-        //formData.append("q4_name[first]", $("#first_4").val());
-        //formData.append("q4_name[last]", $("#last_4").val());
-        //formData.append("q6_department", $("#input_6").val());
-        //formData.append("q8_nonyaleEmail", $("#input_8").val());
-        //formData.append("q7_phoneNumber[full]", $("#phone").val());
-        //formData.append("q20_address[addr_line1]", $("#input_20_addr_line1").val());
-        //formData.append("q20_address[addr_line2]", $("#input_20_addr_line2").val());
-        //formData.append("q20_address[city]", $("#input_20_city").val());
-        //formData.append("q20_address[state]", $("#input_20_state").val());
-        //formData.append("q20_address[postal]", $("#input_20_postal").val());
-        //formData.append("q9_signature", $("#input_9").val());
-
-
-        //var user_files = $("#input_11").prop("files");
-
-        //for(var i = 0; i < user_files.length; i++)
-        //{
-        //  formData.append("q11_shareA[]", user_files[i]);
-        //}
-
-        //if(user_files.length > 0) {
-
-        //  var reader = new FileReader();
-        //  var i = 0;
-        //  reader.onloadend = function(evt) {
-        //    if (evt.target.readyState == FileReader.DONE) {
-        //      //console.log(evt.target.result);
-        //      formData.append("q11_shareA[]", evt.target.result);
-
-        //      if(i < user_files.length) {
-        //        reader.readAsDataURL(user_files[i++]);
-        //      } else {
-        //        //console.log(formData.getAll("q11_shareA[]"));
-        //        //$.ajax({
-        //        ////  url: 'https://unitehere.jotform.com/submit/212716536619864/',
-        //        //  url: '/',
-        //        //  type: 'POST',
-        //        //  data: formData,
-        //        //});
-        //      }
-        //    }
-        //  }
-        //  reader.readAsDataURL(user_files[i++]);
-
-
-        //  formData.append("q11_shareA[]", user_files[0]);
-        //}
-
-      }
+	    });
 
 
     </script>
