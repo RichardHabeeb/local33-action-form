@@ -57,8 +57,8 @@
                 </div>
                 <div class="row">
                   <div class="input-field col s12">
-                    <input type="text" id="want_field" name="q22_iWant">
-                    <label for="want_to_win">What do you want to win?</label>
+                    <input type="text" id="want_field" name="q22_iWant" required>
+                    <label for="want_field">What do you want to win?*</label>
                   </div>
                 </div>
                 <div class="row">
@@ -99,7 +99,7 @@
                 <div class="row">
                   <div class="input-field col s12">
                     <i class="material-icons prefix">phone_iphone</i>
-                    <input type="text" id="input_7_full" name="q7_phoneNumber[full]">
+                    <input type="text" id="phone" name="q7_phoneNumber[full]">
                     <label for="phone">Phone Number</label>
                   </div>
                 </div>
@@ -189,8 +189,8 @@
                 <label>Upload a photo of you with the reason why you want a union.</label>
                 <div class="file-field input-field">
                   <div class="btn dark-magenta-bg">
-                    <span>Upload Picture</span>
-                    <input type="file" id="input_11" name="q11_shareA[]" multiple  accept="image/*" />
+                    <span>Upload File</span>
+                    <input type="file" id="input_11" name="q11_shareA[]" multiple data-file-accept="pdf, doc, docx, xls, xlsx, csv, txt, rtf, html, zip, mp3, wma, mpg, flv, avi, jpg, jpeg, png, gif" data-limit-file-size="Yes" data-file-maxsize="10854" data-file-minsize="0" data-file-limit="" data-component="fileupload" />
                   </div>
                   <div class="file-path-wrapper">
                     <input class="file-path validate" type="text" placeholder="Upload multiple files" />
@@ -272,17 +272,11 @@
         }
 	    });
 
-      function validateForm() {
 
-        var signature = $("#input_11").val().length == 0 ||
-          $("#signature").jSignature('getData', 'native').length > 0;
+      async function generatePdf(auto_print, uri=true) {
+        const existingPdfBytes =
+          await fetch("./union_yes_blank.pdf").then(res => res.arrayBuffer());
 
-        if(signature == false) alert("Your signature is required.");
-        return signature;
-      }
-
-      async function createPdf(auto_print) {
-        const existingPdfBytes = await fetch("./union_yes_blank.pdf").then(res => res.arrayBuffer())
         var bytes = new Uint8Array(existingPdfBytes);
         const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
         const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
@@ -314,7 +308,16 @@
           pdfDoc.addJavaScript("main", "this.print()");
         }
 
-        const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
+        if(uri) {
+          return await pdfDoc.saveAsBase64({ dataUri: true });
+        } else {
+          return await pdfDoc.save();
+        }
+      }
+
+
+      function createPdf(auto_print) {
+        const pdfDataUri = generatePdf(auto_print);
 
         if(auto_print) {
           w = window.open(pdfDataUri);
@@ -326,9 +329,92 @@
           element.click();
         }
 
-        //console.log($("#input_11").val());
-        //const pdfBytes = await pdfDoc.save()
       }
+
+      function validateForm() {
+
+        var signature = $("#input_11").val().length == 0 ||
+          $("#signature").jSignature('getData', 'native').length > 0;
+
+        if(signature == false) alert("Your signature is required.");
+        return signature;
+      }
+
+      function submitForm() {
+        generatePdf(false, false).then(function(pdf_file_bytes) {
+          var form_data = new FormData(document.getElementById("212716536619864"));
+          const bytes  = new Uint8Array( pdf_file_bytes );
+          const blob   = new Blob( [ bytes ], { type: "application/pdf" } );
+          var pdf_file = new File(
+            [blob],
+            $("#first_4").val() + "_" + $("#last_4").val() + "_action.pdf",
+            { type: "application/pdf" });
+
+          form_data.append("q11_shareA[]", pdf_file);
+
+          $.ajax({
+            url: 'https://unitehere.jotform.com/submit/212716536619864/',
+            type: 'POST',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            //contentType: "multipart/form-data",
+
+          });
+        });
+
+        //formData.append("formID", "212716536619864");
+        //formData.append("q22_iWant", $("#want_field").val());
+        //formData.append("q4_name[first]", $("#first_4").val());
+        //formData.append("q4_name[last]", $("#last_4").val());
+        //formData.append("q6_department", $("#input_6").val());
+        //formData.append("q8_nonyaleEmail", $("#input_8").val());
+        //formData.append("q7_phoneNumber[full]", $("#phone").val());
+        //formData.append("q20_address[addr_line1]", $("#input_20_addr_line1").val());
+        //formData.append("q20_address[addr_line2]", $("#input_20_addr_line2").val());
+        //formData.append("q20_address[city]", $("#input_20_city").val());
+        //formData.append("q20_address[state]", $("#input_20_state").val());
+        //formData.append("q20_address[postal]", $("#input_20_postal").val());
+        //formData.append("q9_signature", $("#input_9").val());
+
+
+        //var user_files = $("#input_11").prop("files");
+
+        //for(var i = 0; i < user_files.length; i++)
+        //{
+        //  formData.append("q11_shareA[]", user_files[i]);
+        //}
+
+        //if(user_files.length > 0) {
+
+        //  var reader = new FileReader();
+        //  var i = 0;
+        //  reader.onloadend = function(evt) {
+        //    if (evt.target.readyState == FileReader.DONE) {
+        //      //console.log(evt.target.result);
+        //      formData.append("q11_shareA[]", evt.target.result);
+
+        //      if(i < user_files.length) {
+        //        reader.readAsDataURL(user_files[i++]);
+        //      } else {
+        //        //console.log(formData.getAll("q11_shareA[]"));
+        //        //$.ajax({
+        //        ////  url: 'https://unitehere.jotform.com/submit/212716536619864/',
+        //        //  url: '/',
+        //        //  type: 'POST',
+        //        //  data: formData,
+        //        //});
+        //      }
+        //    }
+        //  }
+        //  reader.readAsDataURL(user_files[i++]);
+
+
+        //  formData.append("q11_shareA[]", user_files[0]);
+        //}
+
+      }
+
 
     </script>
   </body>
