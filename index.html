@@ -360,7 +360,7 @@
               processData: false,
               contentType: false,
               success: function() {
-
+                window.location = "thanks.html"
               },
               error: function() {
                 $("#submit_btn").attr({"disabled": false}).html(
@@ -374,8 +374,7 @@
 
           e.preventDefault();
         });
-
-	    });
+      });
 
 
     </script>
